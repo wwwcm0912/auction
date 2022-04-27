@@ -28,11 +28,13 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
+import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
@@ -63,15 +65,23 @@ public class OAuth2AuthorizationServerSecurityConfiguration {
     public RegisteredClientRepository registeredClientRepository() {
         // @formatter:off
         RegisteredClient loginClient = RegisteredClient.withId(UUID.randomUUID().toString())
+                // 唯一的客户端id和密码
                 .clientId("login-client")
                 .clientSecret("{noop}openid-connect")
+                // 授权方法
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                // 授权类型
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/login-client")
-                .redirectUri("http://127.0.0.1:8080/authorized")
+                // 回调地址名单，不在此列将被拒绝，而且只能使用ip或者域名，不能使用localhost
+                .redirectUri("http://127.0.0.1:31003/login/oauth2/code/login-client")
+                .redirectUri("http://127.0.0.1:31003/authorized")
+                // OIDC支持
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
+                //JWT的配置项 包括TTL 是否复用refreshToken等到
+//                .tokenSettings(TokenSettings.builder().build())
+                // 配置客户端相关的配置项，包括验证密钥或者是否需要授权页面
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
         // @formatter:on
@@ -108,6 +118,7 @@ public class OAuth2AuthorizationServerSecurityConfiguration {
     @Bean
     public ProviderSettings providerSettings() {
         return ProviderSettings.builder().issuer("http://localhost:31001").build();
+//        return ProviderSettings.builder().issuer("http://localhost:31001/oauth2/token").build();
     }
 
     @Bean
@@ -115,7 +126,12 @@ public class OAuth2AuthorizationServerSecurityConfiguration {
         // @formatter:off
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 //        UserDetails userDetails = User.withUsername("user").passwordEncoder(encoder::encode).roles("USER").build();
-        UserDetails userDetails = User.withUsername("user").password("password").roles("USER").build();
+//        UserDetails userDetails = User.withUsername("user").password("password").roles("USER").build();
+        UserDetails userDetails = User.withDefaultPasswordEncoder()
+                .username("user")
+                .password("password")
+                .roles("USER")
+                .build();
         // @formatter:on
         return new InMemoryUserDetailsManager(userDetails);
     }
@@ -126,7 +142,7 @@ public class OAuth2AuthorizationServerSecurityConfiguration {
         KeyPair keyPair;
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(1024);
+            keyPairGenerator.initialize(2048);
             keyPair = keyPairGenerator.generateKeyPair();
         } catch (Exception e) {
             throw new IllegalStateException(e);

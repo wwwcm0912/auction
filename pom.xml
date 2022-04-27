@@ -18,6 +18,10 @@
     <modules>
         <module>eureka-server</module>
         <module>auth-server</module>
+        <module>gateway-server</module>
+        <module>user-server</module>
+        <module>question-server</module>
+        <module>common-server</module>
     </modules>
 
     <properties>

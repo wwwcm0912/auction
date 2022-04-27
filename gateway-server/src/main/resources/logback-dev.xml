@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- spring boot 默认使用 logback，默认会读取 resources 文件夹下名为 logback-dev.xml 的文件 -->
+<!-- scan：设置为 true 时，配置文件如果发生改变，将会被重新加载，默认值为 true -->
+<!-- scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是：毫秒。当 scan 为 true 时，此属性生效。 -->
+<configuration debug="false" scan="true" scanPeriod="60 seconds">
+
+    <!-- 定义一些变量，该配置文件范围使用 -->
+    <!-- 定义日志文件 输入位置 -->
+    <property name="log_dir" value="c:/mnt/logs/auction"/>
+    <!-- 日志最大的历史 30天 -->
+    <property name="max_history" value="30"/>
+    <!-- 模块名称 -->
+    <property name="module_name" value="gateway-server"/>
+    <property name="max_file_size" value="50MB"/>
+
+    <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}" />
+
+    <!-- 彩色日志依赖的渲染类 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <!-- 控制台输出 -->
+<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+<!--            &lt;!&ndash; 格式化输出: %d表示日期,%thread表示线程名,%-5level:级别从左显示5个字符宽度,%msg:日志消息,%n:换行符 &ndash;&gt;-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>-->
+<!--            <charset>UTF-8</charset>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+    <!-- 控制台输出-带颜色 -->
+    <appender name="CONSOLE-WITH-COLOR" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+<!--            <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%thread] %clr(%-5level) %green(%logger{50}) - %highlight(%msg) %n</pattern>-->
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+    <!-- 按照每天生成日志文件 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 日志文件输出的文件名 -->
+            <fileNamePattern>${log_dir}/${module_name}/${module_name}-%d{yyyy-MM-dd}-%i.log.gz</fileNamePattern>
+            <!-- 日志文件保留天数 -->
+            <maxHistory>${max_history}</maxHistory>
+            <!-- 日志文件最大的大小 -->
+            <MaxFileSize>${max_file_size}</MaxFileSize>
+        </rollingPolicy>
+        <!-- 格式化输出: %d表示日期,%thread表示线程名,%-5level:级别从左显示5个字符宽度,%msg:日志消息,%n:换行符 -->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 日志输出级别 -->
+    <root level="INFO">
+        <!-- 控制台输出 -->
+        <appender-ref ref="CONSOLE-WITH-COLOR"/>
+        <!-- 文件输出 -->
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

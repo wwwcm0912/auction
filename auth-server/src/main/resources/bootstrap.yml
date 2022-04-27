@@ -18,3 +18,10 @@ eureka:
     ip-address: 127.0.0.1
     # ????id
     instance-id: ${spring.application.name}:${server.port}
+
+
+logging:
+  level:
+    web: debug
+    org.springframework.security: debug
+  config: classpath:logback-dev.xml
