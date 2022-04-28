@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 @EnableWebSecurity
 public class OAuth2ResourceServerSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-//    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
-//    String jwkSetUri;
-    String jwkSetUri = "http://localhost:31001/oauth2/jwks";
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+    String jwkSetUri;
+//    String jwkSetUri = "http://localhost:31001/oauth2/jwks";
 
 //    @Value("${spring.security.oauth2.resourceserver.jwt.public-key-location}")
 //    RSAPublicKey key;

@@ -5,12 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan(
-        basePackages = {
-                "org.xm.auction.userserver",
-                "org.xm.auction.commonserver"
-        }
-)
 
 @EnableEurekaClient
 @SpringBootApplication

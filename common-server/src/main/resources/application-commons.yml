@@ -1,0 +1,21 @@
+server:
+  forward-headers-strategy: framework
+
+spring:
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:31001/oauth2/jwks
+
+  cloud:
+    httpclientfactories:
+      apache:
+        enabled: true
+      ok:
+        enabled: false
+#  main:
+#    allow-bean-definition-overriding: true
+#    allow-circular-references: true
+#          public-key-location: simple.pub

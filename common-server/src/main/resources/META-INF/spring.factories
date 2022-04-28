@@ -1,0 +1,3 @@
+# AutoConfigureCache auto-configuration imports
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.xm.auction.commonserver.config.CommonsAutoConfiguration

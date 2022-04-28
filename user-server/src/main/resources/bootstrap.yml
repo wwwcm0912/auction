@@ -3,6 +3,9 @@ server:
 spring:
   application:
     name: user-server
+  profiles:
+    active: dev
+    include: commons
   thymeleaf:
     cache: false
 #  security:
